@@ -14,7 +14,7 @@ Icons provided by [icons8.com](icons8.com).
 
 ## How to run
 
-Install the apk provided in app\build\outputs\apk\debug\
+Install the apk provided in apk directory.
 
 OR
 
