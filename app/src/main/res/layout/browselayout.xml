@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:fitsSystemWindows="false"
+    android:focusable="true">
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/primary_shaded"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/horizontalLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:id="@+id/spacyText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:lineSpacingExtra="8sp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="Spacy"
+                    android:textColor="@color/secondary_color"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/tracksText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="1"
+                    android:background="@color/primary_shaded"
+                    android:lineSpacingExtra="8sp"
+                    android:text="Tracks"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="#AEC6CF"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:typeface="normal"
+                    tools:ignore="HardcodedText" />
+
+                <ImageButton
+                    android:id="@+id/refreshButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackground"
+                    android:contentDescription="refreshBtn"
+                    android:onClick="onClick"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:scaleType="center"
+                    android:scaleX="1.2"
+                    android:scaleY="1.2"
+                    android:src="@android:drawable/stat_notify_sync"
+                    android:tint="@color/secondary_color"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/noTracks"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="No tracks found."
+                android:textAlignment="center"
+                android:textColor="@color/primary_text"
+                android:textSize="20sp"
+                android:textStyle="bold|italic"
+                android:visibility="gone"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
