@@ -2,7 +2,7 @@
 
 ## Description
 
-Spacy is a Music Player developed in Android Studio and Java.  
+Spacy is a Music Player developed using Android Studio and Java.  
 It detects the following audio formats: .mp3, .ogg and .wav.  
 The application reads files from the Internal Storage Music directory.
 
@@ -14,7 +14,7 @@ Icons provided by [icons8.com](icons8.com).
 
 ## How to run
 
-Install the apk provided in apk directory.
+Install the apk provided in the apk directory.
 
 OR
 
