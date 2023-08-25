@@ -28,7 +28,9 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
     LinearLayout parentLayout;
     TextView noTracksText;
     ImageButton refreshButton;
+    String currSongString = "";
 
+    SingletonCurr singletonCurr;
 
     @Override
     protected void onCreate(Bundle SavedInstanceState) {
@@ -39,6 +41,14 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
         noTracksText = findViewById(R.id.noTracks);
         refreshButton = findViewById(R.id.refreshButton);
         refreshButton.setOnClickListener(this);
+        singletonCurr = SingletonCurr.getInstance();
+        createListUi();
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        currSongString = singletonCurr.getCurrSongString();
         createListUi();
     }
 
@@ -47,12 +57,6 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
         if (view == refreshButton) {
             createListUi();
         }
-    }
-
-    @Override
-    public void onRestart() {
-        super.onRestart();
-
     }
 
     private void askPerm() {
@@ -90,17 +94,13 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
                 //TextView
                 TextView txt = new TextView(getApplicationContext());
                 txt.setLayoutParams(params);
-                txt.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // Start browse Activity
-                        Intent nextAct = new Intent(getApplicationContext(), PlayerAct.class);
-                        nextAct.putExtra("files", filenames); //send files to next act
-                        nextAct.putExtra("currFile", i); // send current file to next act
-                        startActivity(nextAct);
-                    }
-                });
-                txt.setTextColor(getColor(R.color.primary_text));
+                if (currSongString.equals(i.getName())) { // If a song is playing, set different style and text
+                    txt.setText(String.format("%s - Playing", currSongString));
+                    txt.setTextColor(getColor(R.color.secondary_color));
+                } else {
+                    txt.setTextColor(getColor(R.color.primary_text));
+                    txt.setText(i.getName());
+                }
                 txt.setTypeface(null, Typeface.BOLD);
                 TypedValue out = new TypedValue();
                 getApplicationContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, out, true);
@@ -108,7 +108,17 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
                 txt.setCompoundDrawablesWithIntrinsicBounds(R.drawable.album_default, 0, 0, 0);
                 txt.setCompoundDrawablePadding(20);
                 txt.setGravity(Gravity.CENTER_VERTICAL);
-                txt.setText(i.getName());
+                txt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        singletonCurr.setCurrSongString(i.getName());
+                        // Start browse Activity
+                        Intent nextAct = new Intent(getApplicationContext(), PlayerAct.class);
+                        nextAct.putExtra("files", filenames); //send files to next act
+                        nextAct.putExtra("currFile", i); // send current file to next act
+                        startActivity(nextAct);
+                    }
+                });
 
                 cardView.addView(txt);
                 parentLayout.addView(cardView);
@@ -124,6 +134,8 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
         if (requestCode == PERMISSION_REQUEST_CODE) { //If permission is 'READ_EXTERNAL_STORAGE'
             if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) { //if permission not granted
                 Toast.makeText(this, "READ PERMISSIONS REQUIRED.", Toast.LENGTH_LONG).show();
+            } else {
+                createListUi();
             }
         }
     }

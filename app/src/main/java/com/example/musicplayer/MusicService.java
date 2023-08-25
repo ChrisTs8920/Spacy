@@ -1,5 +1,7 @@
 package com.example.musicplayer;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -7,6 +9,7 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,33 +19,56 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
     ArrayList<File> filenames;
     int[] songIDs;
-    int currSong;
+    int currSongId;
     MediaPlayer MP;
     boolean active;
+    Notification notification;
+    NotificationManager manager;
     private final IBinder binder = new LocalBinder();
 
     @Override
     public void onCreate() {
+        SingletonCurr singletonCurr = SingletonCurr.getInstance();
+        /*notification = new Notification.Builder(this)
+                .setContentTitle("Currently Playing")
+                .setContentText(singletonCurr.getCurrSongString())
+                .setSmallIcon(R.mipmap.ic_launcher_astr)
+                .build();*/
+        // manager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
+        // .notify(1, notification.build());
         filenames = AudioFileReader.getAudioFiles();
+        MP = new MediaPlayer();
         active = false;
         setSongIDs();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // startForeground(startId, notification); // make Foreground service
+        if (currSongId == intent.getIntExtra("currSong", 0)) { // if same song selected, keep playing
+            return START_STICKY;
+        }
+        currSongId = intent.getIntExtra("currSong", 0);
+        if (MP.isPlaying()) {
+            MP.stop();
+            MP.release();
+        }
+        MP = new MediaPlayer();
+        MP.setLooping(false);
+        try {
+            MP.setDataSource(String.valueOf(filenames.get(currSongId)));
+            MP.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        MP.start();
+        active = true;
+        return START_STICKY;
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) { // called right after onCreate
-        currSong = intent.getIntExtra("currSong", 0);
-        MP = new MediaPlayer();
-        try {
-            MP.setDataSource(String.valueOf(filenames.get(currSong)));
-            MP.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        MP.setLooping(false);
-        // MP.setOnCompletionListener(this);
-        MP.start();
-        active = true;
         return binder;
     }
 
@@ -62,7 +88,6 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-        // nextSong();
     }
 
     public File nextSong() {
@@ -70,21 +95,20 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             MP.stop();
             MP.release();
         }
-        if (++currSong == filenames.size()) {
-            currSong = 0;
+        if (++currSongId == filenames.size()) {
+            currSongId = 0;
         }
         MP = new MediaPlayer();
         try {
-            MP.setDataSource(String.valueOf(filenames.get(currSong)));
+            MP.setDataSource(String.valueOf(filenames.get(currSongId)));
             MP.prepare();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        MP.setOnCompletionListener(this);
         if (active) {
             MP.start();
         }
-        return filenames.get(currSong);
+        return filenames.get(currSongId);
     }
 
     public File previousSong() {
@@ -92,21 +116,20 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             MP.stop();
             MP.release();
         }
-        if (--currSong == -1) {
-            currSong = filenames.size() - 1;
+        if (--currSongId == -1) {
+            currSongId = filenames.size() - 1;
         }
         MP = new MediaPlayer();
         try {
-            MP.setDataSource(String.valueOf(filenames.get(currSong)));
+            MP.setDataSource(String.valueOf(filenames.get(currSongId)));
             MP.prepare();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        MP.setOnCompletionListener(this);
         if (active) {
             MP.start();
         }
-        return filenames.get(currSong);
+        return filenames.get(currSongId);
     }
 
     public void playSong() {

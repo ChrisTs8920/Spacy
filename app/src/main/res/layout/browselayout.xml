@@ -84,6 +84,7 @@
                 android:id="@+id/noTracks"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingTop="5dp"
                 android:text="No tracks found."
                 android:textAlignment="center"
                 android:textColor="@color/primary_text"

@@ -30,12 +30,14 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
     ImageButton nextBtn;
     SeekBar seekBar;
     File currSongFile;
+    int currSongId;
     Timer timer = null;
     TimerTask timerTask = null;
-    int currSong;
     ArrayList<File> filenames = null;
     boolean connected;
     MusicService musicService;
+    Intent musicInt;
+    SingletonCurr singletonCurr;
 
     @Override
     protected void onCreate(Bundle SavedInstanceState) {
@@ -55,6 +57,7 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
 
         filenames = new ArrayList<>();
         connected = false;
+        singletonCurr = SingletonCurr.getInstance();
         // get data from previous Activity
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -62,7 +65,7 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
             filenames = (ArrayList<File>) extras.get("files");
         }
         if (filenames != null) {
-            currSong = filenames.indexOf(currSongFile); //set current song index
+            currSongId = filenames.indexOf(currSongFile); //set current song index
         }
         updateTitleText();
         doStart();
@@ -78,7 +81,6 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
     public void onClick(View view) {
         if (view == playBtn && !musicService.active) {
             doPlay();
-            // updateSongTimer();
         } else if (view == playBtn){
             doPause();
         }
@@ -92,8 +94,9 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
+        singletonCurr.setCurrSongString(currSongFile.getName());
         timer.cancel();
-        finish();
     }
 
     @Override
@@ -117,9 +120,10 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
 
     public void doStart() {
         if (!connected) {
-            Intent musicInt = new Intent(this, MusicService.class);
-            musicInt.putExtra("currSong", currSong);
-            bindService(musicInt, serviceConnection, Context.BIND_AUTO_CREATE);
+            musicInt = new Intent(this, MusicService.class);
+            musicInt.putExtra("currSong", currSongId);
+            startService(musicInt); // calls onStartCommand().
+            bindService(musicInt, serviceConnection, Context.BIND_AUTO_CREATE); // calls onBind
         }
     }
 
