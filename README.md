@@ -8,6 +8,8 @@ The application reads files from the Internal Storage Music directory.
 
 Icons provided by [icons8.com](icons8.com).
 
+*This project was made during my Android Programming course in University.*
+
 ## Requirements
 
 - Android Nougat 7.0+ (Tested using Android 10)
