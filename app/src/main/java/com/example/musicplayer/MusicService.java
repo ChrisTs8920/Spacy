@@ -1,15 +1,21 @@
 package com.example.musicplayer;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,26 +23,24 @@ import java.util.ArrayList;
 
 public class MusicService extends Service implements MediaPlayer.OnCompletionListener {
 
+    private final String CHANNEL_ID = "";
+    private final int NOTIFICATION_ID = 1;
     ArrayList<File> filenames;
     int[] songIDs;
     int currSongId;
     MediaPlayer MP;
     boolean active;
-    Notification notification;
-    NotificationManager manager;
+    NotificationCompat.Builder notification;
+    NotificationManager notificationManager;
+    SingletonCurr singletonCurr;
     private final IBinder binder = new LocalBinder();
 
     @Override
     public void onCreate() {
-        SingletonCurr singletonCurr = SingletonCurr.getInstance();
-        /*notification = new Notification.Builder(this)
-                .setContentTitle("Currently Playing")
-                .setContentText(singletonCurr.getCurrSongString())
-                .setSmallIcon(R.mipmap.ic_launcher_astr)
-                .build();*/
-        // manager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
-        // .notify(1, notification.build());
+        singletonCurr = SingletonCurr.getInstance();
         filenames = AudioFileReader.getAudioFiles();
+        createNotificationChannel();
+        createNotification();
         MP = new MediaPlayer();
         active = false;
         setSongIDs();
@@ -44,7 +48,6 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // startForeground(startId, notification); // make Foreground service
         if (currSongId == intent.getIntExtra("currSong", 0)) { // if same song selected, keep playing
             return START_STICKY;
         }
@@ -63,6 +66,8 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         }
         MP.start();
         active = true;
+        notification.setContentText(singletonCurr.getCurrSongString());
+        notificationManager.notify(NOTIFICATION_ID, notification.build());
         return START_STICKY;
     }
 
@@ -72,11 +77,42 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         return binder;
     }
 
+    public void createNotification() {
+        notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("Playing")
+                .setContentText(singletonCurr.getCurrSongString())
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.music_note))
+                .setSmallIcon(R.mipmap.ic_launcher_astr)
+                .setShowWhen(false)
+                .setOngoing(true) // notification cannot be dismissed
+                .setPriority(Notification.PRIORITY_DEFAULT); // for android 7.1 and lower
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            NotificationManagerCompat.from(this)
+                    .notify(NOTIFICATION_ID, notification.build());
+        }
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ / Android 8 because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Notification",
+                    NotificationManager.IMPORTANCE_LOW);
+            channel.setDescription("Default description");
+            // Register the channel with the system
+            notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+
     @Override
     public void onDestroy() {
         MP.stop();
         MP.release();
         active = false;
+        notificationManager.cancel(NOTIFICATION_ID);
     }
 
     public void setSongIDs() {
@@ -108,6 +144,12 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         if (active) {
             MP.start();
         }
+
+        // update notification
+        singletonCurr.setCurrSongString(filenames.get(currSongId).getName());
+        notification.setContentText(singletonCurr.getCurrSongString());
+        notificationManager.notify(NOTIFICATION_ID, notification.build());
+
         return filenames.get(currSongId);
     }
 
@@ -129,6 +171,12 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         if (active) {
             MP.start();
         }
+
+        // update notification
+        singletonCurr.setCurrSongString(filenames.get(currSongId).getName());
+        notification.setContentText(singletonCurr.getCurrSongString());
+        notificationManager.notify(NOTIFICATION_ID, notification.build());
+
         return filenames.get(currSongId);
     }
 
@@ -138,6 +186,8 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         }
         MP.start();
         active = true;
+        notification.setContentTitle("Playing");
+        notificationManager.notify(NOTIFICATION_ID, notification.build());
     }
 
     public void pauseSong() {
@@ -146,6 +196,8 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         }
         MP.pause();
         active = false;
+        notification.setContentTitle("Paused");
+        notificationManager.notify(NOTIFICATION_ID, notification.build());
     }
 
     public class LocalBinder extends Binder {
