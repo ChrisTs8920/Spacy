@@ -60,7 +60,7 @@
         android:scaleType="center"
         android:scaleX="1.8"
         android:scaleY="1.8"
-        android:src="@android:drawable/ic_media_pause"
+        android:src="@drawable/baseline_pause_white_36"
         android:tint="@color/secondary_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -68,7 +68,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:layout_constraintVertical_bias="0.5"
         tools:ignore="HardcodedText"
-        tools:srcCompat="@android:drawable/ic_media_pause" />
+        tools:srcCompat="@drawable/baseline_pause_white_36" />
 
     <ImageButton
         android:id="@+id/prevBtn"
@@ -79,7 +79,7 @@
         android:contentDescription="prevBtn"
         android:scaleX="1.5"
         android:scaleY="1.5"
-        android:src="@android:drawable/ic_media_previous"
+        android:src="@drawable/baseline_skip_previous_white_36"
         android:tint="@color/secondary_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/playBtn"
@@ -96,7 +96,7 @@
         android:contentDescription="nextBtn"
         android:scaleX="1.5"
         android:scaleY="1.5"
-        android:src="@android:drawable/ic_media_next"
+        android:src="@drawable/baseline_skip_next_white_36"
         android:tint="@color/secondary_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -110,7 +110,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginBottom="10dp"
-        android:text="0:0"
+        android:text="00:00"
         android:textColor="@color/secondary_color"
         app:layout_constraintBottom_toTopOf="@+id/seekBar"
         app:layout_constraintStart_toStartOf="parent" />
@@ -121,7 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="10dp"
-        android:text="3:00"
+        android:text="03:00"
         android:textColor="@color/secondary_color"
         app:layout_constraintBottom_toTopOf="@+id/seekBar"
         app:layout_constraintEnd_toEndOf="parent" />
