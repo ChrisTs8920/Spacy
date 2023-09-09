@@ -16,13 +16,9 @@ public class SplashAct extends AppCompatActivity {
         this.setContentView(R.layout.splashlayout);
 
         // Show splash screen for 2 seconds, then move on to Browse Activity
-        // During splash screen, observer service is started
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Start observer Service
-                Intent service = new Intent(getApplicationContext(), FileService.class);
-                startService(service);
                 // Start browse Activity
                 Intent nextAct = new Intent(getApplicationContext(), BrowseAct.class);
                 startActivity(nextAct);

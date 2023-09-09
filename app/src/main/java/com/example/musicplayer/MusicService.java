@@ -27,7 +27,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     private final int NOTIFICATION_ID = 1;
     ArrayList<File> filenames;
     int[] songIDs;
-    int currSongId;
+    int currSongId = -1;
     MediaPlayer MP;
     boolean active;
     NotificationCompat.Builder notification;
@@ -81,8 +81,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Playing")
                 .setContentText(singletonCurr.getCurrSongString())
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.music_note))
-                .setSmallIcon(R.mipmap.ic_launcher_astr)
+                .setSmallIcon(R.drawable.baseline_music_note_white_24)
                 .setShowWhen(false)
                 .setOngoing(true) // notification cannot be dismissed
                 .setPriority(Notification.PRIORITY_DEFAULT); // for android 7.1 and lower

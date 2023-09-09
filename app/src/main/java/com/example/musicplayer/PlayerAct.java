@@ -139,7 +139,7 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
             return;
         }
         musicService.playSong();
-        playBtn.setImageResource(android.R.drawable.ic_media_pause);
+        playBtn.setImageResource(R.drawable.baseline_pause_white_36);
     }
 
     public void doPause() {
@@ -147,7 +147,7 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
             return;
         }
         musicService.pauseSong();
-        playBtn.setImageResource(android.R.drawable.ic_media_play);
+        playBtn.setImageResource(R.drawable.baseline_play_arrow_white_36);
     }
 
     public void doNext() {
