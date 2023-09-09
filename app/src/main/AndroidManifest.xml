@@ -33,11 +33,5 @@
             android:enabled="true"
             android:exported="true">
         </service>
-        <service
-            android:name=".FileService"
-            android:enabled="true"
-            android:exported="true"
-            android:stopWithTask="true">
-        </service>
     </application>
 </manifest>
