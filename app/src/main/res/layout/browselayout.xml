@@ -41,7 +41,6 @@
                     android:id="@+id/spacyText"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="0"
                     android:fontFamily="sans-serif"
                     android:gravity="center"
                     android:lineSpacingExtra="8sp"
@@ -55,9 +54,9 @@
 
                 <Space
                     android:id="@+id/space"
-                    android:layout_width="200dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="0" />
+                    android:layout_weight="2" />
 
                 <SearchView
                     android:id="@+id/searchView"
