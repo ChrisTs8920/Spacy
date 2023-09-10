@@ -5,12 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="bottom"
+    android:animateLayoutChanges="true"
     android:fitsSystemWindows="false"
     android:focusable="true">
 
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:animateLayoutChanges="true"
         android:background="@color/primary_shaded"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,12 +23,16 @@
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/horizontalLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@color/primary_shaded"
+                android:minHeight="60dp"
                 android:orientation="horizontal"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp">
@@ -34,8 +40,10 @@
                 <TextView
                     android:id="@+id/spacyText"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="0"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center"
                     android:lineSpacingExtra="8sp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
@@ -45,22 +53,25 @@
                     android:textStyle="bold"
                     tools:ignore="HardcodedText" />
 
-                <TextView
-                    android:id="@+id/tracksText"
+                <Space
+                    android:id="@+id/space"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0" />
+
+                <SearchView
+                    android:id="@+id/searchView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:layout_weight="1"
-                    android:background="@color/primary_shaded"
-                    android:lineSpacingExtra="8sp"
-                    android:text="Tracks"
-                    android:textAlignment="center"
-                    android:textAllCaps="false"
-                    android:textColor="#AEC6CF"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:typeface="normal"
-                    tools:ignore="HardcodedText" />
+                    android:background="?attr/selectableItemBackground"
+                    android:orientation="horizontal"
+                    android:paddingTop="3dp"
+                    android:queryBackground="@color/primary_color"
+                    android:queryHint="Search a track"
+                    android:scaleX="0.9"
+                    android:scaleY="0.9"
+                    android:searchHintIcon="@drawable/outline_search_white_36"
+                    android:searchIcon="@drawable/outline_search_white_36" />
 
                 <ImageButton
                     android:id="@+id/refreshButton"
@@ -72,10 +83,9 @@
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
                     android:scaleType="center"
-                    android:scaleX="0.9"
-                    android:scaleY="0.9"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
                     android:src="@drawable/baseline_refresh_white_36"
-                    android:tint="@color/secondary_color"
                     tools:ignore="HardcodedText" />
 
             </LinearLayout>

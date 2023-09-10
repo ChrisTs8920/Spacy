@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
     ArrayList<File> filenames = null;
     LinearLayout parentLayout;
     TextView noTracksText;
+    SearchView searchView;
     ImageButton refreshButton;
     String currSongString = "";
 
@@ -41,9 +43,28 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
         askPerm();
         parentLayout = findViewById(R.id.linearLayout);
         noTracksText = findViewById(R.id.noTracks);
+        searchView = findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if (s.isEmpty()) {
+                    filenames = AudioFileReader.getAudioFiles();
+                } else {
+                    filenames.removeIf(i -> !i.getName().contains(s)); // equal to a for loop
+                }
+                createListUi();
+                return false;
+            }
+        });
         refreshButton = findViewById(R.id.refreshButton);
         refreshButton.setOnClickListener(this);
         singletonCurr = SingletonCurr.getInstance();
+        filenames = AudioFileReader.getAudioFiles(); // if perm granted return song list, else return empty list
         createListUi();
     }
 
@@ -85,7 +106,6 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
         );
         paramsMargin.setMargins(15, 0, 15, 15);
 
-        filenames = AudioFileReader.getAudioFiles(); // if perm granted return song list, else return empty list
         // for every audio file detected, make a new CardView that contains a TextView
         // and add it to parent layout
         if (filenames.size() != 0) {
@@ -120,6 +140,7 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
                     @Override
                     public void onClick(View view) {
                         singletonCurr.setCurrSongString(i.getName());
+                        filenames = AudioFileReader.getAudioFiles();
                         // Start browse Activity
                         Intent nextAct = new Intent(getApplicationContext(), PlayerAct.class);
                         nextAct.putExtra("files", filenames); //send files to next act
