@@ -43,6 +43,7 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
     protected void onCreate(Bundle SavedInstanceState) {
         super.onCreate(SavedInstanceState);
         this.setContentView(R.layout.playerlayout);
+        this.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         songTitleText = findViewById(R.id.songTitleplayer);
         songDuration = findViewById(R.id.songDuration);
         playBtn = findViewById(R.id.playBtn);

@@ -37,6 +37,7 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
     protected void onCreate(Bundle SavedInstanceState) {
         super.onCreate(SavedInstanceState);
         this.setContentView(R.layout.browselayout);
+        this.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         askPerm();
         parentLayout = findViewById(R.id.linearLayout);
         noTracksText = findViewById(R.id.noTracks);
@@ -96,7 +97,7 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
                 cardView.setLayoutParams(paramsMargin);
                 cardView.setCardBackgroundColor(getColor(R.color.primary_color));
                 cardView.setRadius(5);
-                cardView.setCardElevation(2);
+                cardView.setCardElevation(8);
 
                 //TextView
                 TextView txt = new TextView(getApplicationContext());

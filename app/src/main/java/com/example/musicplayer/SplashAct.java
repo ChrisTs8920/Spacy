@@ -14,6 +14,7 @@ public class SplashAct extends AppCompatActivity {
     protected void onCreate(Bundle SavedInstanceState) {
         super.onCreate(SavedInstanceState);
         this.setContentView(R.layout.splashlayout);
+        this.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
         // Show splash screen for 2 seconds, then move on to Browse Activity
         new Handler().postDelayed(new Runnable() {
