@@ -44,8 +44,8 @@
                     android:fontFamily="sans-serif"
                     android:gravity="center"
                     android:lineSpacingExtra="8sp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
                     android:text="Spacy"
                     android:textColor="@color/secondary_color"
                     android:textSize="24sp"
@@ -82,8 +82,8 @@
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
                     android:scaleType="center"
-                    android:scaleX="0.8"
-                    android:scaleY="0.8"
+                    android:scaleX="0.9"
+                    android:scaleY="0.9"
                     android:src="@drawable/baseline_refresh_white_36"
                     tools:ignore="HardcodedText" />
 

@@ -140,7 +140,7 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
             return;
         }
         musicService.playSong();
-        playBtn.setImageResource(R.drawable.baseline_pause_white_36);
+        playBtn.setImageResource(R.drawable.outline_pause_white_36);
     }
 
     public void doPause() {

@@ -55,12 +55,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="200dp"
-        android:background="?attr/selectableItemBackground"
+        android:background="#00FFFFFF"
         android:contentDescription="play-pause"
         android:scaleType="center"
-        android:scaleX="1.5"
-        android:scaleY="1.5"
-        android:src="@drawable/baseline_pause_white_36"
+        android:scaleX="1.1"
+        android:scaleY="1.1"
+        android:src="@drawable/outline_pause_white_36"
         android:tint="@color/secondary_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -68,17 +68,15 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:layout_constraintVertical_bias="0.5"
         tools:ignore="HardcodedText"
-        tools:srcCompat="@drawable/baseline_pause_white_36" />
+        tools:srcCompat="@drawable/outline_pause_white_36" />
 
     <ImageButton
         android:id="@+id/prevBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="200dp"
-        android:background="?attr/selectableItemBackground"
+        android:background="#00FFFFFF"
         android:contentDescription="prevBtn"
-        android:scaleX="1.3"
-        android:scaleY="1.3"
         android:src="@drawable/baseline_skip_previous_white_36"
         android:tint="@color/secondary_color"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -92,10 +90,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="200dp"
-        android:background="?attr/selectableItemBackground"
+        android:background="#00FFFFFF"
         android:contentDescription="nextBtn"
-        android:scaleX="1.3"
-        android:scaleY="1.3"
         android:src="@drawable/baseline_skip_next_white_36"
         android:tint="@color/secondary_color"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -112,6 +108,7 @@
         android:layout_marginBottom="10dp"
         android:text="00:00"
         android:textColor="@color/secondary_color"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/seekBar"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -123,6 +120,7 @@
         android:layout_marginBottom="10dp"
         android:text="03:00"
         android:textColor="@color/secondary_color"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/seekBar"
         app:layout_constraintEnd_toEndOf="parent" />
 
