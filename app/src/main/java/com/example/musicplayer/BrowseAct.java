@@ -55,7 +55,7 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
                 if (s.isEmpty()) {
                     filenames = AudioFileReader.getAudioFiles();
                 } else {
-                    filenames.removeIf(i -> !i.getName().contains(s)); // equal to a for loop
+                    filenames.removeIf(i -> !i.getName().toLowerCase().contains(s.toLowerCase())); // equal to a for loop
                 }
                 createListUi();
                 return false;
