@@ -3,8 +3,6 @@
 ## Description
 
 Spacy is a Music Player developed using Android Studio and Java.  
-It detects the following audio formats: .mp3, .ogg and .wav.  
-The application reads files from the Internal Storage Music directory.
 
 Icons provided by:
 
@@ -12,6 +10,14 @@ Icons provided by:
 [Google Material Icons](https://fonts.google.com/icons)
 
 *This project was made during my Android Programming course in University.*
+
+## Features
+
+- Detect tracks from Music directory (Internal Storage)
+- Play, Pause and navigate through tracks
+- Search for specific tracks using the search function
+- Notification with playback buttons. Also shows current track playing
+- Supported formats: mp3, ogg, wav
 
 ## Requirements
 
