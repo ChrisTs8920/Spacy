@@ -1,11 +1,14 @@
 package com.example.musicplayer;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
@@ -15,23 +18,24 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MusicService extends Service implements MediaPlayer.OnCompletionListener {
+public class MusicService extends Service {
 
     private final String CHANNEL_ID = "";
     private final int NOTIFICATION_ID = 1;
     ArrayList<File> filenames;
-    int[] songIDs;
     int currSongId = -1;
     MediaPlayer MP;
     boolean active;
     NotificationCompat.Builder notification;
     NotificationManager notificationManager;
     SingletonCurr singletonCurr;
+    Intent myIntent;
     private final IBinder binder = new LocalBinder();
 
     @Override
@@ -41,15 +45,43 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         createNotificationChannel();
         createNotification();
         MP = new MediaPlayer();
+        myIntent = new Intent("UPDATE");
         active = false;
-        setSongIDs();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // Handle notification input
+        String action = intent.getAction();
+        if (action != null) {
+            switch (action) {
+                case "Play":
+                    if (MP.isPlaying()) {
+                        pauseSong();
+                        myIntent.putExtra("Play", 0);
+                        LocalBroadcastManager.getInstance(this).sendBroadcast(myIntent);
+                    } else {
+                        playSong();
+                        myIntent.putExtra("Play", 1);
+                        LocalBroadcastManager.getInstance(this).sendBroadcast(myIntent);
+                    }
+                    break;
+                case "Previous":
+                    previousSong();
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(myIntent);
+                    break;
+                case "Next":
+                    nextSong();
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(myIntent);
+                    break;
+            }
+            return START_STICKY;
+        }
+
         if (currSongId == intent.getIntExtra("currSong", 0)) { // if same song selected, keep playing
             return START_STICKY;
         }
+
         currSongId = intent.getIntExtra("currSong", 0);
         if (MP.isPlaying()) {
             MP.stop();
@@ -60,6 +92,13 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         try {
             MP.setDataSource(String.valueOf(filenames.get(currSongId)));
             MP.prepare();
+            MP.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    nextSong();
+                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(myIntent);
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -77,15 +116,35 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     }
 
     public void createNotification() {
+        // previous intent
+        Intent prevIntent = new Intent(this, MusicService.class);
+        prevIntent.setAction("Previous");
+        PendingIntent prIntent = PendingIntent.getService(this, 0, prevIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        // play intent
+        Intent playIntent = new Intent(this, MusicService.class);
+        playIntent.setAction("Play");
+        PendingIntent pIntent = PendingIntent.getService(this, 0, playIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        // next intent
+        Intent nextIntent = new Intent(this, MusicService.class);
+        nextIntent.setAction("Next");
+        PendingIntent nIntent = PendingIntent.getService(this, 0, nextIntent, PendingIntent.FLAG_IMMUTABLE);
+
         notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Playing")
                 .setContentText(singletonCurr.getCurrSongString())
                 .setSmallIcon(R.drawable.baseline_music_note_white_24)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.album_default))
+                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
                 .setShowWhen(false)
                 .setOngoing(true) // notification cannot be dismissed
+                .addAction(R.drawable.baseline_skip_previous_white_24, "Previous", prIntent)
+                .addAction(R.drawable.baseline_play_arrow_white_24, "Play", pIntent)
+                .addAction(R.drawable.baseline_skip_next_white_24, "Next", nIntent)
                 .setPriority(Notification.PRIORITY_DEFAULT); // for android 7.1 and lower
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             NotificationManagerCompat.from(this)
                     .notify(NOTIFICATION_ID, notification.build());
         }
@@ -113,17 +172,6 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         notificationManager.cancel(NOTIFICATION_ID);
     }
 
-    public void setSongIDs() {
-        songIDs = new int[filenames.size()];
-        for (int i = 0; i < filenames.size(); i++) {
-            songIDs[i] = i;
-        }
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
-    }
-
     public File nextSong() {
         if (MP.isPlaying()) {
             MP.stop();
@@ -136,6 +184,13 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         try {
             MP.setDataSource(String.valueOf(filenames.get(currSongId)));
             MP.prepare();
+            MP.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    nextSong();
+                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(myIntent);
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -163,6 +218,13 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         try {
             MP.setDataSource(String.valueOf(filenames.get(currSongId)));
             MP.prepare();
+            MP.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    nextSong();
+                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(myIntent);
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }

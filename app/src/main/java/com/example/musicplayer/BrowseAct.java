@@ -1,6 +1,9 @@
 package com.example.musicplayer;
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -19,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,7 +35,6 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
     TextView noTracksText;
     SearchView searchView;
     ImageButton refreshButton;
-    String currSongString = "";
 
     SingletonCurr singletonCurr;
 
@@ -71,8 +74,19 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
     @Override
     public void onRestart() {
         super.onRestart();
-        currSongString = singletonCurr.getCurrSongString();
         createListUi();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, new IntentFilter("UPDATE"));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance (getApplicationContext()). unregisterReceiver (receiver);
     }
 
     @Override
@@ -122,8 +136,8 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
                 //TextView
                 TextView txt = new TextView(getApplicationContext());
                 txt.setLayoutParams(params);
-                if (currSongString.equals(i.getName())) { // If a song is playing, set different style and text
-                    txt.setText(String.format("%s - Playing", currSongString));
+                if (singletonCurr.getCurrSongString().equals(i.getName())) { // If a song is playing, set different style and text
+                    txt.setText(String.format("%s - Playing", singletonCurr.getCurrSongString()));
                     txt.setTextColor(getColor(R.color.secondary_color));
                 } else {
                     txt.setTextColor(getColor(R.color.primary_text));
@@ -169,4 +183,11 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
             }
         }
     }
+
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            createListUi();
+        }
+    };
 }

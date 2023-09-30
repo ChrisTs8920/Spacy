@@ -1,8 +1,10 @@
 package com.example.musicplayer;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -73,8 +76,15 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, new IntentFilter("UPDATE"));
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
+        LocalBroadcastManager.getInstance (getApplicationContext()). unregisterReceiver (receiver);
         doStop();
     }
 
@@ -156,14 +166,8 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
             return;
         }
         currSongFile = musicService.nextSong();
-        updateTitleText();
-        updateDurationText();
-        setMPListener();
-
         // update immediately, so that it does not wait for next updateSongTimer call.
-        seekBar.setProgress(0);
-        songTimer.setText("00:00");
-        seekBar.setMax(musicService.MP.getDuration());
+        updateUi();
     }
 
     public void doPrevious() {
@@ -171,18 +175,20 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
             return;
         }
         currSongFile = musicService.previousSong();
+        // update immediately, so that it does not wait for next updateSongTimer call.
+        updateUi();
+    }
+
+    public void updateUi() {
         updateTitleText();
         updateDurationText();
-        setMPListener();
-
-        // update immediately, so that it does not wait for next updateSongTimer call.
         seekBar.setProgress(0);
         songTimer.setText("00:00");
         seekBar.setMax(musicService.MP.getDuration());
     }
 
     public void updateTitleText() {
-        songTitleText.setText(currSongFile.getName());
+        songTitleText.setText(singletonCurr.getCurrSongString());
     }
 
     public void updateSongTimer() {
@@ -213,15 +219,6 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
         songDuration.setText(String.format(Locale.getDefault(), "%02d:%02d", min, sec));
     }
 
-    public void setMPListener() {
-        musicService.MP.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                doNext();
-            }
-        });
-    }
-
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -229,7 +226,6 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
             musicService = binder.getService();
             updateDurationText();
             updateSongTimer();
-            setMPListener();
             seekBar.setMax(musicService.MP.getDuration());
             connected = true;
         }
@@ -237,6 +233,19 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             connected = false;
+        }
+    };
+
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int play = intent.getIntExtra("Play", 2);
+            if (play == 1) {
+                playBtn.setImageResource(R.drawable.outline_pause_white_36);
+            } else if (play == 0) {
+                playBtn.setImageResource(R.drawable.baseline_play_arrow_white_36);
+            }
+            updateUi();
         }
     };
 }
