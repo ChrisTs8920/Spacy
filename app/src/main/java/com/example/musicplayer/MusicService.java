@@ -242,25 +242,29 @@ public class MusicService extends Service {
         return filenames.get(currSongId);
     }
 
-    @SuppressLint("RestrictedApi")
+    @SuppressLint("RestrictedApi") // suppresses mAction.set() warning
     public void playSong() {
         if (active) {
             return;
         }
         MP.start();
         active = true;
+
+        // update notification
         notification.setContentTitle("Playing");
         notification.mActions.set(1, new NotificationCompat.Action(R.drawable.baseline_pause_white_24, "Play", pIntent));
         notificationManager.notify(NOTIFICATION_ID, notification.build());
     }
 
-    @SuppressLint("RestrictedApi")
+    @SuppressLint("RestrictedApi") // suppresses mAction.set() warning
     public void pauseSong() {
         if (!active) {
             return;
         }
         MP.pause();
         active = false;
+
+        // update notification
         notification.setContentTitle("Paused");
         notification.mActions.set(1, new NotificationCompat.Action(R.drawable.baseline_play_arrow_white_24, "Play", pIntent));
         notificationManager.notify(NOTIFICATION_ID, notification.build());

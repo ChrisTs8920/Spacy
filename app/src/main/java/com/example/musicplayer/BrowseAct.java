@@ -54,7 +54,7 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
+            public boolean onQueryTextChange(String s) { // refresh ui on query update
                 if (s.isEmpty()) {
                     filenames = AudioFileReader.getAudioFiles();
                 } else {
