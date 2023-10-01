@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
@@ -226,6 +225,11 @@ public class PlayerAct extends AppCompatActivity implements View.OnClickListener
             musicService = binder.getService();
             updateDurationText();
             updateSongTimer();
+            if (musicService.MP.isPlaying()) {
+                playBtn.setImageResource(R.drawable.outline_pause_white_36);
+            } else {
+                playBtn.setImageResource(R.drawable.baseline_play_arrow_white_36);
+            }
             seekBar.setMax(musicService.MP.getDuration());
             connected = true;
         }

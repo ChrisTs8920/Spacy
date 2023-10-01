@@ -1,6 +1,7 @@
 package com.example.musicplayer;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -36,6 +37,7 @@ public class MusicService extends Service {
     NotificationManager notificationManager;
     SingletonCurr singletonCurr;
     Intent myIntent;
+    PendingIntent pIntent;
     private final IBinder binder = new LocalBinder();
 
     @Override
@@ -124,7 +126,7 @@ public class MusicService extends Service {
         // play intent
         Intent playIntent = new Intent(this, MusicService.class);
         playIntent.setAction("Play");
-        PendingIntent pIntent = PendingIntent.getService(this, 0, playIntent, PendingIntent.FLAG_IMMUTABLE);
+        pIntent = PendingIntent.getService(this, 0, playIntent, PendingIntent.FLAG_IMMUTABLE);
 
         // next intent
         Intent nextIntent = new Intent(this, MusicService.class);
@@ -140,7 +142,7 @@ public class MusicService extends Service {
                 .setShowWhen(false)
                 .setOngoing(true) // notification cannot be dismissed
                 .addAction(R.drawable.baseline_skip_previous_white_24, "Previous", prIntent)
-                .addAction(R.drawable.baseline_play_arrow_white_24, "Play", pIntent)
+                .addAction(R.drawable.baseline_pause_white_24, "Play", pIntent)
                 .addAction(R.drawable.baseline_skip_next_white_24, "Next", nIntent)
                 .setPriority(Notification.PRIORITY_DEFAULT); // for android 7.1 and lower
 
@@ -240,6 +242,7 @@ public class MusicService extends Service {
         return filenames.get(currSongId);
     }
 
+    @SuppressLint("RestrictedApi")
     public void playSong() {
         if (active) {
             return;
@@ -247,9 +250,11 @@ public class MusicService extends Service {
         MP.start();
         active = true;
         notification.setContentTitle("Playing");
+        notification.mActions.set(1, new NotificationCompat.Action(R.drawable.baseline_pause_white_24, "Play", pIntent));
         notificationManager.notify(NOTIFICATION_ID, notification.build());
     }
 
+    @SuppressLint("RestrictedApi")
     public void pauseSong() {
         if (!active) {
             return;
@@ -257,6 +262,7 @@ public class MusicService extends Service {
         MP.pause();
         active = false;
         notification.setContentTitle("Paused");
+        notification.mActions.set(1, new NotificationCompat.Action(R.drawable.baseline_play_arrow_white_24, "Play", pIntent));
         notificationManager.notify(NOTIFICATION_ID, notification.build());
     }
 
