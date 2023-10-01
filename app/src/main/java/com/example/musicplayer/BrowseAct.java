@@ -29,7 +29,8 @@ import java.util.ArrayList;
 
 public class BrowseAct extends AppCompatActivity implements View.OnClickListener {
 
-    private final int PERMISSION_REQUEST_CODE = 1; // permission code for READ_MEDIA_AUDIO
+    private final int PERMISSION_REQUEST_CODE_1 = 1; // permission code for READ_MEDIA_AUDIO
+    private final int PERMISSION_REQUEST_CODE_2 = 2; // permission code for POST_NOTIFICATION
     ArrayList<File> filenames = null;
     LinearLayout parentLayout;
     TextView noTracksText;
@@ -99,11 +100,14 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
     private void askPerm() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) { // if android 12 and lower
             if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE); //This calls onRequestPermissionsResult()
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE_1); //This calls onRequestPermissionsResult()
             }
         } else { // if android 13+
             if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_MEDIA_AUDIO}, PERMISSION_REQUEST_CODE); //This calls onRequestPermissionsResult()
+                requestPermissions(new String[]{Manifest.permission.READ_MEDIA_AUDIO}, PERMISSION_REQUEST_CODE_1); //This calls onRequestPermissionsResult()
+            }
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE_1);
             }
         }
     }
@@ -174,7 +178,7 @@ public class BrowseAct extends AppCompatActivity implements View.OnClickListener
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_CODE) { //If permission is 'READ_EXTERNAL_STORAGE'
+        if (requestCode == PERMISSION_REQUEST_CODE_1) { //If permission is 'READ_EXTERNAL_STORAGE'
             if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) { //if permission not granted
                 Toast.makeText(this, "READ PERMISSIONS REQUIRED.", Toast.LENGTH_LONG).show();
             } else {
